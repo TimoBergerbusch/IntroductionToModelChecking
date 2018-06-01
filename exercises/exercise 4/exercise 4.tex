@@ -1,0 +1,246 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath} % Math
+\usepackage{amssymb} % Math symbols
+\usepackage[english]{babel} % Language
+\usepackage{fancyhdr} % Header
+\usepackage[a4paper, total={15cm, 20cm}]{geometry} % Dimensions of the paper and the text area
+\usepackage[utf8]{inputenc} % encoding in UTF, needed for umlauts if German
+\usepackage{mathtools} % Text above arrows
+\usepackage{msc} % Drawing MSCs
+\usepackage{multicol} % Multiple columns
+\usepackage[explicit]{titlesec} % Automatic section titles
+\usepackage{tikz} % Diagrams
+\usetikzlibrary{arrows.meta, automata, shapes, matrix,positioning}
+\usepackage{enumitem}   % Enumeration item
+\usepackage{float}
+\usepackage{verbatim}
+
+
+% Other packages that might be useful in the future
+%\usepackage{lingmacros}
+%\usepackage{tree-dvips}
+%\usepackage{ulem}
+%\usepackage{amsthm}
+%\usepackage{amsbsy}
+%\usepackage{textcomp,gensymb}
+%\usepackage{graphicx}
+%\usepackage{mathtools}
+
+% Custom variant of msc environment:
+% - No "msc" keyword, longer partial messages
+% - Increased vertical distance between messages
+% - Less distance to the frame left and right
+% - Less distance between header and processes
+% - Less distance between footer and frame
+% - Passing all given options down to the msc environment
+\newenvironment{cmsc}[1][]{\msc[msc keyword={}, self message width=1.1cm, level height=0.6cm, environment distance=1.2cm, head top distance=0.75cm, foot distance=0.5cm, #1]}{\endmsc}
+
+% No indentation at new paragraphs
+\setlength{\parindent}{0pt}
+
+% Distance between columns
+\setlength{\columnsep}{1cm}
+% Vertical line between columns
+\setlength{\columnseprule}{0.5pt}
+\def\columnseprulecolor{\color{gray}}
+
+% Settings
+\newcommand{\sheetNr}{4}
+\newcommand{\red}[1]{\color{red}#1\color{black}}
+
+%% Header
+\fancyhf{}
+\pagestyle{fancy}
+\lhead{Model Checking Exercise Sheet \sheetNr}
+\rhead{Aaron Grabowy: 345766\\ Timo Bergerbusch: 344408\\ Felix Linhart: 318801}
+\setlength{\headheight}{40pt}
+
+%% Automatic section titles
+\titleformat{\section}{\normalfont\Large\bfseries}{}{0em}{Exercise #1}
+\titleformat{\subsection}{\normalfont\large\bfseries}{}{0em}{#1)}
+
+\begin{document}
+	
+\section{1}
+\subsection{a}
+
+\section{2}
+\subsection{a}
+The statement does not hold.\\
+Counterexample: 
+
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+	\node[] (LabelTS1) {$TS_1$:};
+	\node[state, initial, initial text = , below = of LabelTS1, label = below:$\emptyset$] (s0) {$s_0$};
+	\node[state, label = below:$\emptyset$, right = of s0] (s1) {$s_1$};
+	
+	\node[right = 5cm of LabelTS1] (LabelTS2) {$TS_2$:};
+	\node[state, initial, initial text = , below = of LabelTS2, label = below:$\emptyset$] (t0) {$t_0$};
+	\node[state,label = below:$\emptyset$, right = of t0] (t1) {$t_1$};
+
+	\node[right = 5cm of LabelTS2] (LabelTS12) {$TS_1 || TS_2$:};	
+	\node[state, initial, initial text = , below = of LabelTS12, label = below:$\emptyset$] (u0) {$\langle s_0, t_0 \rangle$};
+	\node[state,label = below:$\emptyset$, right = of u0] (u1) {$\langle s_1, t_1 \rangle$};
+		
+	\path[->] (s0) edge[bend left = 20] node {$\tau$} (s1);
+	\path[->] (s1) edge[bend left = 20] node {$\tau$} (s0);
+	\path[->] (t0) edge node {$\tau$} (t1);
+	\path[->] (u0) edge node {$\tau$} (u1);
+\end{tikzpicture}\\
+Then: \begin{itemize}
+	\item $trace(TS_1) = \{\emptyset^\omega\}$
+	\item $trace(TS_1) = \{\emptyset\emptyset\}$
+	\item $trace(TS_1 || TS_2) = \{\emptyset\emptyset\}$
+	\item $\Rightarrow \emptyset^\omega \in Traces(TS_1)$, but $\emptyset^\omega \notin Traces(TS_1||TS_2)$
+\end{itemize}
+
+\subsection{b}
+The statement does not hold.\\
+Counterexample: 
+
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+\node[] (LabelTS1) {$TS_1$:};
+\node[state, initial, initial text = , below = of LabelTS1, label = below:$\emptyset$] (s0) {$s_0$};
+\node[state, label = below:$\{a\}$, right = of s0] (s1) {$s_1$};
+
+\node[right = 5cm of LabelTS1] (LabelTS2) {$TS_2$:};
+\node[state, initial, initial text = , below = of LabelTS2, label = below:$\emptyset$] (t0) {$t_0$};
+\node[state,label = below:$\emptyset$, right = of t0] (t1) {$t_1$};
+
+\node[right = 5cm of LabelTS2] (LabelTS12) {$TS_1 || TS_2$:};	
+\node[state, initial, initial text = , below = of LabelTS12, label = below:$\emptyset$] (u0) {$\langle s_0, t_0 \rangle$};
+\node[state,label = below:$\{a\}$, right = of u0] (u1) {$\langle s_1, t_1 \rangle$};
+
+\path[->] (s0) edge[bend left = 20] node {$\tau$} (s1);
+\path[->] (s1) edge[bend left = 20] node {$\alpha$} (s0);
+\path[->] (t0) edge[loop above] node {$\alpha$} (t0);
+\path[->] (t0) edge node {$\tau$} (t1);
+\path[->] (u0) edge node {$\tau$} (u1);
+\end{tikzpicture}\\
+Then: \begin{itemize}
+	\item $trace(TS_1) = \{(\emptyset\{a\})^\omega\}$
+	\item $trace(TS_1) = \{\emptyset\emptyset\}$
+	\item $trace(TS_1 || TS_2) = \{\emptyset\{a\}\}$
+	\item $\Rightarrow \emptyset\{a\} \in Traces(TS_1|| TS_2)$, but $\emptyset\{a\} \notin Traces(TS_1)$
+\end{itemize}
+
+\subsection{c}
+
+The statement holds.\\
+Let $Traces(TS_1) \subseteq Traces(TS_2)$. Then $Traces(TS_1) \setminus Traces(TS_2) = \emptyset$.\\
+Further let $t$ be an arbitrary trace, with $t \in Traces(TS_1) \cap Traces(TS_2)$:\\
+If $t \text{ is a } \mathcal{F}\text{-fair execution}$ then$t\in FairTraces_\mathcal{F}(TS_1)$ and $t\in FairTraces_\mathcal{F}(TS_2)$\\
+If $t \text{ is not a } \mathcal{F}\text{-fair execution}$ then $t\notin FairTraces_\mathcal{F}(TS_1)$ and $t\notin FairTraces_\mathcal{F}(TS_2)$\\
+So $FairTraces(TS_1) \subseteq FairTraces(TS_2)$.
+\subsection{d}
+
+Let $Traces(TS_1)\subseteq Traces(TS_2)$,$E = $eventually $a$ will occur, with $a \in Act_2$, but $a \notin Act_1$, and $TS_2 \models_F E$.\\
+
+Through the lecture we know, that liveness properties are not effected by fairness assumptions.\\
+So $TS \models_\mathcal{F} E \Leftrightarrow TS \models E$ for any liveness property $E$.\\
+
+So $TS_1 \models_\mathcal{F} E \Leftrightarrow TS_1 \models E$. Let a finite word $\sigma$ be given, not containing an $a$. 
+Since $a\notin Act_1$ we cannot find a $\sigma'$ s.t. $\sigma\sigma' \in E$. So $TS_1 \not\models E$ and therefore $TS_1 \not\models_\mathcal{F} E$.
+
+%Further if we can find for every $\sigma \in 2^{AP}$ a $\sigma' \in (2^{AP})^\omega$, s.t. $\sigma\sigma' \in E$ then we also can find such $\simga'$ for 
+
+\section{3}
+\subsection{a}
+\begin{itemize}
+	\item[$E_a$:] $TS \not\models E_a$, since $\sigma = (\emptyset \{b\})^\omega \in Traces(TS)$, but $\sigma$ obviously contains no $a$.
+	\item[$E_b$:] $TS \not\models E_b$, since $\sigma' = (\emptyset \{a\})^\omega \in Traces(TS)$, but $\sigma'$ obviously contains no $b$.
+	\item[$E'$:] $TS \not\models E'$, since $\sigma'' = (\emptyset\{a\}\{a,b\}\emptyset)^\omega \in Traces(TS)$, but there ex. a $i=1$, such that $A_i=\{a\}, A_{i+1}=\{a,b\}$ and $A_{i+2}=\emptyset$.
+\end{itemize}
+
+\subsection{b}
+% BEGIN: E_a
+\subsubsection{$E_a$}\label{here}
+\begin{itemize}
+%	\setlength{\itemindent}{1cm}
+	\item[$B=B_1$:] $TS \models_{\mathcal{F}_{strong}^1} E_a$\\
+		There is no path from an initial state s.t. never an $\alpha$-transition is enabled.
+		Therefore we have to take an $\alpha$ infinitely many times. So we either go the loop $s_1s_2s_4$ or the loop $s_1s_3s_4$ both fulfilling the premise and conclusion of strong fairness. But then we infinitely often visit state $s_4$ containing an $a$ in its label. So we have have $a$ infinitely often.
+	\item[$B=B_2$:] $TS \not\models{\mathcal{F}_{strong}^2} E_a$\\
+	One path that fulfils the strong fairness condition is $\pi = s_1 s_3 s_1 s_3\dots$.\\
+	But $trace(\pi) = (\emptyset\{b\})^\omega$ does not have infinitely many $a$'s.
+	\item[$B=B_3$:] $TS \not\models{\mathcal{F}_{strong}^3} E_a$\\
+	One path that fulfils the strong fairness condition is $\pi = s_1 s_3 s_1 s_3\dots$.\\
+	But $trace(\pi) = (\emptyset\{b\})^\omega$ does not have infinitely many $a$'s.
+\end{itemize}
+
+% BEGIN: E_b
+\subsubsection{$E_b$}
+\begin{itemize}
+	%	\setlength{\itemindent}{1cm}
+	\item[$B=B_1$:] $TS \not\models{\mathcal{F}_{strong}^1} E_b$\\
+	One path that fulfils the strong fairness condition is $\pi = s_1s_2s_1s_2\dots$\\
+	But $trace(\pi) = (\emptyset\{a\})^\omega$ does not have infinitely many $b$'s.
+	\item[$B=B_2$:] $TS \not\models{\mathcal{F}_{strong}^2} E_b$\\
+	One path that fulfils the strong fairness condition is $\pi = s_1s_2s_1s_2\dots$\\
+	But $trace(\pi) = (\emptyset\{a\})^\omega$ does not have infinitely many $b$'s.
+	\item[$B=B_3$:] $TS \models{\mathcal{F}_{strong}^3} E_b$\\
+	There is just one path fulfilling the strong fairness condition: $\pi= s_1 s_3 s_4 s_1 s_3 s_4 \dots$\\
+	Then $trace(\pi) = (\emptyset\{b\}\{a,b\})^\omega$ has infinitely many $b$'s.
+\end{itemize}
+
+% BEGIN: E'
+\subsubsection{$E'$}
+\begin{itemize}
+	%	\setlength{\itemindent}{1cm}
+	\item[$B=B_1$:] $TS \not\models{\mathcal{F}_{strong}^1} E'$\\
+	One path that fulfils the strong fairness condition is $\pi = s_1s_2s_4s_1s_2s_4\dots$\\
+	But $trace(\pi) = (\emptyset\{a\}\{a,b\})^\omega \not\models E'$.
+	\item[$B=B_2$:] $TS \not\models{\mathcal{F}_{strong}^2} E'$\\
+	One path that fulfils the strong fairness condition is $\pi = s_1s_2s_4s_1s_2s_4\dots$\\
+	But $trace(\pi) = (\emptyset\{a\}\{a,b\})^\omega \not\models E'$.
+	\item[$B=B_3$:] $TS \not\models{\mathcal{F}_{strong}^2} E'$\\
+	One path that fulfils the strong fairness condition is $\pi= s_1s_3s_4 s_1s_2s_4s_1s_3s_4 s_1s_2s_4 \dots$\\
+	But $traces(\pi)=(\emptyset\{b\}\{a,b\}\emptyset\{a\}\{a,b\})^\omega \not\models E'$
+\end{itemize}
+
+\subsection{c}
+
+% BEGIN: E_a
+\subsubsection{$E_a$}
+\begin{itemize}
+	%	\setlength{\itemindent}{1cm}
+	\item[$B=B_1$:] $TS \models_{\mathcal{F}_{weak}^1} E_a$\\
+		The only path not containing infinitely many $a$'s is the path $\pi= s_1s_3s_1s_3\dots$. Then $\pi$ fulfils the conditions of weak fairness, but not the conclusion and therefore is so eligible path. So we have to take $s_3 \xrightarrow{\alpha}a_4$ or $s_1 \xrightarrow{\alpha} s_2$ infinitely often leading to a state having $a$ in the label. So we have infinitely many $a$'s.
+	\item[$B=B_2$:] $TS \not\models{\mathcal{F}_{weak}^2} E_a$\\
+		One path that fulfils the weak fairness condition is $\pi = s_1 s_3 s_1 s_3\dots$. We fulfil the premise, but by taking $\beta$ every second time we also fulfil the conclusion.\\
+		But $trace(\pi) = (\emptyset\{b\})^\omega$ does not have infinitely many $a$'s.
+	\item[$B=B_3$:] $TS \not\models{\mathcal{F}_{weak}^3} E_a$\\
+		There is no path in $TS$, such that the premise holds. So all paths are fair with respect to the stated fairness condition. But again we can take the path $\pi = s_1 s_3 s_1 s_3\dots$ and observe, that $trace(\sigma) =(\emptyset\{b\})^\omega$ does not contain infinitely many $a$'s.
+\end{itemize}
+
+% BEGIN: E_b
+\subsubsection{$E_b$}
+\begin{itemize}
+	%	\setlength{\itemindent}{1cm}
+	\item[$B=B_1$:] $TS \not\models{\mathcal{F}_{weak}^1} E_b$\\
+		One path that does not fulfil the weak fairness premise is $\pi = s_1s_2s_1s_2\dots$. Since it does not satisfy the premise is satisfies the whole condition.\\
+		But $trace(\pi) = (\emptyset\{a\})^\omega$ does not have infinitely many $b$'s.
+	\item[$B=B_2$:] $TS \not\models{\mathcal{F}_{weak}^2} E_b$\\
+		One path that fulfils the weak fairness premise and conclusion is $\pi = s_1s_2s_1s_2\dots$\\
+		But $trace(\pi) = (\emptyset\{a\})^\omega$ does not have infinitely many $b$'s.
+	\item[$B=B_3$:] $TS \not\models{\mathcal{F}_{weak}^3} E_b$\\
+		There is not path s.t. contentiously $\beta$ transitions are enabled. So the premise does not hold and therefore the weak fairness is fulfilled. 
+		But obviously there are paths not fulfilling the property, like $\pi = s_1s_2s_1s_2\dots$, with $trace(\pi) = (\emptyset\{a\})^\omega$ does not have infinitely many $b$'s.
+\end{itemize}
+
+% BEGIN: E'
+\subsubsection{$E'$}
+\begin{itemize}
+	%	\setlength{\itemindent}{1cm}
+	\item[$B=B_1$:] $TS \not\models{\mathcal{F}_{strong}^1} E'$\\
+		One path that does not fulfil the weak fairness premise is $\pi=s_1s_2s_4s_1s_2s_4\dots$. Since it does not satisfy the premise is satisfies the whole condition.\\
+		But $trace(\pi) = (\emptyset\{a\}\{a,b\})^\omega$ does not satisfy the property.
+	\item[$B=B_2$:] $TS \not\models{\mathcal{F}_{strong}^2} E'$\\
+		One path that does not fulfil the weak fairness premise is $\pi=s_1s_2s_4s_1s_2s_4\dots$. Since it does not satisfy the premise is satisfies the whole condition.\\
+		But $trace(\pi) = (\emptyset\{a\}\{a,b\})^\omega$ does not satisfy the property.
+	\item[$B=B_3$:] $TS \not\models{\mathcal{F}_{strong}^2} E'$\\
+		There is not path s.t. contentiously $\beta$ transitions are enabled. So the premise does not hold and therefore the weak fairness is fulfilled.\\
+		But for the path $\pi=s_1s_2s_4s_1s_2s_4\dots$ the trace looks like the following $trace(\pi)= (\emptyset\{a\}\{a,b\})^\omega$ and obviously does not satisfy the property.
+\end{itemize}
+
+\end{document}

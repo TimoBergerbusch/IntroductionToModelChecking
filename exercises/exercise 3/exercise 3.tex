@@ -1,0 +1,196 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath} % Math
+\usepackage{amssymb} % Math symbols
+\usepackage[english]{babel} % Language
+\usepackage{fancyhdr} % Header
+\usepackage[a4paper, total={15cm, 20cm}]{geometry} % Dimensions of the paper and the text area
+\usepackage[utf8]{inputenc} % encoding in UTF, needed for umlauts if German
+\usepackage{mathtools} % Text above arrows
+\usepackage{msc} % Drawing MSCs
+\usepackage{multicol} % Multiple columns
+\usepackage[explicit]{titlesec} % Automatic section titles
+\usepackage{tikz} % Diagrams
+\usetikzlibrary{arrows.meta, automata, shapes, matrix,positioning}
+\usepackage{enumitem}   % Enumeration item
+\usepackage{float}
+\usepackage{verbatim}
+
+
+% Other packages that might be useful in the future
+%\usepackage{lingmacros}
+%\usepackage{tree-dvips}
+%\usepackage{ulem}
+%\usepackage{amsthm}
+%\usepackage{amsbsy}
+%\usepackage{textcomp,gensymb}
+%\usepackage{graphicx}
+%\usepackage{mathtools}
+
+% Custom variant of msc environment:
+% - No "msc" keyword, longer partial messages
+% - Increased vertical distance between messages
+% - Less distance to the frame left and right
+% - Less distance between header and processes
+% - Less distance between footer and frame
+% - Passing all given options down to the msc environment
+\newenvironment{cmsc}[1][]{\msc[msc keyword={}, self message width=1.1cm, level height=0.6cm, environment distance=1.2cm, head top distance=0.75cm, foot distance=0.5cm, #1]}{\endmsc}
+
+% No indentation at new paragraphs
+\setlength{\parindent}{0pt}
+
+% Distance between columns
+\setlength{\columnsep}{1cm}
+% Vertical line between columns
+\setlength{\columnseprule}{0.5pt}
+\def\columnseprulecolor{\color{gray}}
+
+% Settings
+\newcommand{\sheetNr}{3}
+\newcommand{\red}[1]{\color{red}#1\color{black}}
+
+%% Header
+\fancyhf{}
+\pagestyle{fancy}
+\lhead{Model Checking Exercise Sheet \sheetNr}
+\rhead{Aaron Grabowy: 345766\\ Timo Bergerbusch: 344408\\ Felix Linhart: 318801}
+\setlength{\headheight}{40pt}
+
+%% Automatic section titles
+\titleformat{\section}{\normalfont\Large\bfseries}{}{0em}{Exercise #1}
+\titleformat{\subsection}{\normalfont\large\bfseries}{}{0em}{#1)}
+
+\begin{document}
+	
+\section{1}
+\subsection{a}
+
+$Traces(TS) = \{\emptyset (\emptyset^+ [\{a\}])^* \emptyset \{b\}\} \cup \{\emptyset^\omega\} \cup \{\emptyset(\emptyset^+\{a\})^\omega\} \cup \{\emptyset(\emptyset^+(\{a\}\emptyset)^*)^+\emptyset^\omega\}$
+
+We have always enter the ``second'' state, which is the state reached by the initial state using $\tau$. Now we have several options. We could either take the self loop infinitely times. If we take it only finitely many times (including 0) we could also go to the state labelled with $\{a\}$ and back. This could also be an infinite circle. Otherwise we again could take the self loop as often as we like. This process of selfloop-circle-selfloop can also be repeated infinitely often. We could also stop after having performed the desired amount of these loops and enter the state labelled with $\{b\}$ and have a finite trace.\\
+So we denote, like in regular expressions, the ability to take the loops finitely or infinitely often with the Kleene-star. 
+
+\subsection{b}
+No, since $t = \emptyset\emptyset\emptyset\{b\} \in Traces(TS_1)$ but $t \notin Traces(TS_2)$
+\section{2}
+\subsection{a}
+\begin{enumerate}[label=(\roman*)]
+\item $LT_{(i)}=\{A_0A_1A_2\dots \in (2^AP)^\omega : \exists i \in \mathbb{N}\text{ s.t. } winter \in A_i\}$
+%$winter \in A_i$
+\item $LT_{(ii)}=\{A_0A_1A_2\dots \in (2^AP)^\omega : \forall i \in \mathbb{N}: awesome \in A_i\}$
+%for every $x \in A_i$ it holds that $awesome \in x$
+\item $LT_{(iii)}=\{A_0A_1A_2\dots \in (2^AP)^\omega : A_0 = \{here\} \land \exists i,j \in \mathbb{N}, 1\le i<j, A_i = \emptyset, A_j=\{here\}\}$
+\item $LT_{(iv)}=\{A_0A_1A_2\dots \in (2^AP)^\omega : A_0=\{live, hero\} \land \exists i \in \mathbb{N}\text{ s.t. } A_i \in \{\{hero\},\{live\}\} \land \forall j \in \mathbb{N}, i \le j A_i = A_j\}$
+%Every word $A_i$ begins with $\{live, hero\}$ and is followed by \underline{either} $\{hero\}$ or $\{live\}$
+\item $LT_{(v)}=\{A_0A_1A_2\dots \in (2^AP)^\omega : A_0 = \{day, form\_1\} \land \forall i \in \mathbb{N}\setminus \{0\}: $\\
+\hspace*{1.5cm}$(A_{i-1} = \{day, form\_1\} \Rightarrow A_i = \{night, form\_2\} \lor A_i = \{kiss\}) \land$\\
+\hspace*{1.5cm}$(A_{i-1} = \{night, form\_2\} \Rightarrow A_i = \{day, form\_1\} \lor A_i = \{kiss\}) \land$\\
+\hspace*{1.5cm}$(A_{i-1}= \{kiss\} \Rightarrow A_i=\{true\_form\})\land$\\
+\hspace*{1.5cm}$(A_{i-1}= \{true\_form\} \Rightarrow A_{i}= \{true\_form\})\}$
+\item $LT_{(vi)}=\{A_0A_1A_2\dots \in (2^AP)^\omega : (\exists i \in \mathbb{N}, A_i=\{in\_debt\}) \Rightarrow (\exists j \in \mathbb{N}, i < j, A_j = \emptyset)\}$
+\item it's a valid statement. It contains every possible word $A \in {2^{AP}}^\omega$, since anything and therefore every combination of $ap_1, \dots , ap_n$ is possible
+\item $LT_{(viii)}=\{A_0A_1A_2\dots \in (2^AP)^\omega : A_0 = \{legen\} \land \exists n \in \mathbb{N} (A_n = \{dary\} \land \forall i \in \mathbb{N}, 0 < i < n, A_i = \{wait\_for\_it\} )\}$
+
+\end{enumerate}
+\subsection{b}
+
+\subsubsection*{(i)}
+	\vspace*{-2em}
+	\begin{figure}[H]
+		\centering
+		\begin{tabular}{c | c}
+			is saftey & is liveness? \\ \hline
+			no & yes \\
+		\end{tabular}
+	\end{figure}
+	\underline{Justification}: every given word can be expanded such that $winter$ is contained, by simply adding if it is not originally in the word.
+
+\subsubsection*{(ii)}
+	\vspace*{-2em}
+	\begin{figure}[H]
+		\centering
+		\begin{tabular}{c | c}
+			is saftey & is liveness? \\ \hline
+			yes & no \\
+		\end{tabular}
+	\end{figure}
+	\underline{Justification}: Once having a prefix of a word that in one particular state %TODO state richtig?
+	does not contain the AP $awesome$ then we cannot satisfy this property any longer
+
+\subsubsection*{(iii)}
+	\vspace*{-2em}
+	\begin{figure}[H]
+		\centering
+		\begin{tabular}{c | c}
+			is saftey & is liveness? \\ \hline
+			no & no \\
+		\end{tabular}
+	\end{figure}
+	\underline{Justification}: There are two forms in which this LT can be violated 
+	\begin{enumerate}
+		\item We dont start with $here$
+		\item We start with here, but never come back
+	\end{enumerate}
+	We therefore cannot define one single prefix s.t. it holds for every word violating $LT_{(iii)}$. Also we can not find a suffix $\sigma'$ to the word $\sigma = \emptyset$ s.t. $\sigma\sigma' \models LT_{(iii)}$. Therefore it is neither.
+%	for every word that does not satisfy the property already, it must have the syntactical property of having $here$ but either not going somewhere else or not coming back. So we can simple add $\emptyset\{here\}$ and again satisfy the property
+
+\subsubsection*{(iv)}
+	\vspace*{-2em}
+	\begin{figure}[H]
+		\centering
+		\begin{tabular}{c | c}
+			is saftey & is liveness? \\ \hline
+			no & no  \\
+		\end{tabular}
+	\end{figure}
+	\underline{Justification}: for $\omega = \emptyset$ we cannot find a continuation $\omega'$ s.t. $\omega\omega' \models LT_{(vi)}$. \\
+	But we can not find a prefix s.t. if we start with $\{live,here\}\{hero\}\{hero\}\dots$ and continue with $\{hero\}$ finitely many times that we go back to a state $\{live,hero\}$. For a safety property such a prefix has to exists for every word not in $LT_{(vi)}$. So it's neither.
+
+\subsubsection*{(v)}
+	\vspace*{-2em}
+	\begin{figure}[H]
+		\centering
+		\begin{tabular}{c | c}
+			is saftey & is liveness? \\ \hline
+			yes & no \\
+		\end{tabular}
+	\end{figure}
+	\underline{Justification}: for $\omega = {day} \in BadPref_{(v)}$ we cannot find a continuation $\omega'$ s.t. $\omega\omega' \models LT_{(v)}$
+
+\subsubsection*{(vi)}
+	\vspace*{-2em}
+	\begin{figure}[H]
+		\centering
+		\begin{tabular}{c | c}
+			is saftey & is liveness? \\ \hline
+			no & yes \\
+		\end{tabular}
+	\end{figure}
+	\underline{Justification}: every finite word not containing $in\_dept$ already satisfies $LT_{(vi)}$. Every finite word containing \dots %TODO have to go back to emptyset?
+
+\subsubsection*{(vii)}
+	\vspace*{-2em}
+	\begin{figure}[H]
+		\centering
+		\begin{tabular}{c | c}
+			is saftey & is liveness? \\ \hline
+			yes & yes \\
+		\end{tabular}
+	\end{figure}
+	\underline{Justification}: per definition in lecture 6 on slide 162.
+
+\subsubsection*{(viii)}
+	\vspace*{-2em}
+	\begin{figure}[H]
+		\centering
+		\begin{tabular}{c | c}
+			is saftey & is liveness? \\ \hline
+			yes & no \\
+		\end{tabular}
+	\end{figure}
+	\underline{Justification}: if the word has the prefix $\omega = {dary}$ we cannot find a continuation s.t. $\omega \omega' \models LT_{(viii)}$
+
+
+
+
+
+\end{document}
