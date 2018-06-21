@@ -289,13 +289,14 @@ Based on the picture in Exercise 3 b), we can see that once we enter the state $
 
 \section{4}
 \subsection{a}
+$\alpha_{pre} = ((b.b)^* + (c.(a.a)^*.c)^*)^*$\\
 $\alpha_{(q_2,q_3)} = c.a^\omega$\\
 $\alpha_{(q_1,q_3)} = false = \text{no combination}$\\
 $\alpha_{(q_0,q_2)} = c^\omega$\\
-$\alpha = \alpha_{(q_2,q_3)} +\alpha_{(q_1,q_3)} +\alpha_{(q_0,q_2)} = c.a^\omega+c^\omega$
+$\alpha = \alpha_{pre} . (\alpha_{(q_2,q_3)} +\alpha_{(q_1,q_3)} +\alpha_{(q_0,q_2)}) = ((b.b)^* + (c.(a.a)^*.c)^*)^*+(c.a^\omega+c^\omega)$
 
 \subsection{b}
-Let GNBA $\mathcal{G}=(Q,\Sigma,\Delta, Q_0, \mathcal{F})$ then we can construct the equivalent nondeterministic Muller automaton $\mathcal{A} = (Q, \Sigma, \delta, Q_0, \mathcal{F}')$ by just taking for every set $F_i\in\mathcal{F}, 1\le i\le |\mathcal{F}|$ and build the cross product of all these $F_i$'s:
+Let GNBA $\mathcal{G}=(Q,\Sigma,\delta, Q_0, \mathcal{F})$ then we can construct the equivalent nondeterministic Muller automaton $\mathcal{A} = (Q, \Sigma, \delta, Q_0, \mathcal{F}')$ by just taking for every set $F_i\in\mathcal{F}, 1\le i\le |\mathcal{F}|$ and build the cross product of all these $F_i$'s:
 	$$\mathcal{F}' =  F_1 \times F_2 \times \dots \times F_{|\mathcal{F}|}$$
 In $\mathcal{G}$, in order to be accepting, we had to visit at-least one element of every $F_i$ infinitely often. In The Muller automaton we have to reach one of every possible combination.\\
 
@@ -303,7 +304,16 @@ Let $\rho$ be an arbitrary accepting run of $\mathcal{G}$. Then $\rho$ visits at
 Therefore we can state a $f_i \in F_i$ that is visited infinitely often.\\
 By construction $\{f_1,f_2,\dots, f_{|\mathcal{F}|}\} \in \mathcal{F}'$ and therefore $\mathcal{A}$ accepts.
 
-% also state other way?
+Let $\rho'$ be an accepting run of $\mathcal{A}$. Then there is a $F'\in \mathcal{F}'$, s.t. $\exists^\infty i \ge 0. q_i = q$ or in words: every element of $F'$ is visited infinitely often. By construction this set $F'$ is a combination of elements, s.t.
+\begin{itemize}
+	\item $|F'| = |\mathcal{F}$
+	\item $\forall 0\le i \le |F'|. \text{for }f_i \in F'  \text{ the }i\text{-th element also } f_i \in F_i \in \mathcal{F}$
+	\item[] or in words: every $i$-th element of $F'$ is an element of the $i$-th element of $\mathcal{F}$
+\end{itemize} 
+
+So for every set in $\mathcal{F}$ there is an element that is visited infinitely often. And so it is also an accepting run in $\mathcal{G}$.
+
+Since every accepting run of $\mathcal{G}$ is an accepting run of $\mathcal{A}$ and vice versa those two are equivalent.
 
 \end{document}
 

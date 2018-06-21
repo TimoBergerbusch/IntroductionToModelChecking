@@ -1,0 +1,203 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath} % Math
+\usepackage{amssymb} % Math symbols
+\usepackage[english]{babel} % Language
+\usepackage{fancyhdr} % Header
+\usepackage[a4paper, total={15cm, 20cm}]{geometry} % Dimensions of the paper and the text area
+\usepackage[utf8]{inputenc} % encoding in UTF, needed for umlauts if German
+\usepackage{mathtools} % Text above arrows
+\usepackage{msc} % Drawing MSCs
+\usepackage{multicol} % Multiple columns
+\usepackage[explicit]{titlesec} % Automatic section titles
+\usepackage{tikz} % Diagrams
+\usetikzlibrary{arrows.meta, automata, shapes, matrix,positioning}
+\usepackage{enumitem}   % Enumeration item
+\usepackage{float}
+\usepackage{verbatim}
+\usepackage{subcaption} 
+
+
+% Other packages that might be useful in the future
+%\usepackage{lingmacros}
+%\usepackage{tree-dvips}
+%\usepackage{ulem}
+%\usepackage{amsthm}
+%\usepackage{amsbsy}
+%\usepackage{textcomp,gensymb}
+%\usepackage{graphicx}
+%\usepackage{mathtools}
+
+% Custom variant of msc environment:
+% - No "msc" keyword, longer partial messages
+% - Increased vertical distance between messages
+% - Less distance to the frame left and right
+% - Less distance between header and processes
+% - Less distance between footer and frame
+% - Passing all given options down to the msc environment
+\newenvironment{cmsc}[1][]{\msc[msc keyword={}, self message width=1.1cm, level height=0.6cm, environment distance=1.2cm, head top distance=0.75cm, foot distance=0.5cm, #1]}{\endmsc}
+
+% No indentation at new paragraphs
+\setlength{\parindent}{0pt}
+
+% Distance between columns
+\setlength{\columnsep}{1cm}
+% Vertical line between columns
+\setlength{\columnseprule}{0.5pt}
+\def\columnseprulecolor{\color{gray}}
+
+% Settings
+\newcommand{\sheetNr}{8}
+
+%% Header
+\fancyhf{}
+\pagestyle{fancy}
+\lhead{Model Checking Exercise Sheet \sheetNr}
+\rhead{Aaron Grabowy: 345766\\ Timo Bergerbusch: 344408\\ Felix Linhart: 318801}
+\setlength{\headheight}{40pt}
+
+%% Automatic section titles
+\titleformat{\section}{\normalfont\Large\bfseries}{}{0em}{Exercise #1}
+\titleformat{\subsection}{\normalfont\large\bfseries}{}{0em}{#1)}
+
+\begin{document}
+	
+	\section{1}
+	\subsection{a}
+	% \begin{align*}
+	% 	\varphi &= (a \rightarrow \bigcirc \lnot b) \text{ W } (a \land b) \\
+	% 	\varphi'=\lnot\varphi &= \lnot \big[(a \rightarrow \bigcirc \lnot b) \text{ W } (a \land b) \big]\\
+	% 	&\Leftrightarrow (\lnot(a \land b)) \text{ U } (\lnot(a \rightarrow \bigcirc \lnot b) \land \lnot(a \land b))\\
+	% 	&\Leftrightarrow (\lnot(a \land b)) \text{ U } ((a \land \bigcirc b) \land \lnot(a \land b))\\
+	% 	&\Leftrightarrow (\lnot(a \land b)) \text{ U } (a \land \bigcirc b \land \lnot(a \land b))\\
+	% 	&\Leftrightarrow (\lnot(a \land b)) \text{ U } (a \land \bigcirc b \land \lnot b)\\
+	% \end{align*}
+	\begin{align*}
+	\varphi &= (a \rightarrow \bigcirc \lnot b) \text{ W } (a \land b) \\
+	\varphi'=\lnot\varphi &= \lnot \big[(a \rightarrow \bigcirc \lnot b) \text{ W } (a \land b) \big]\\
+	&\Leftrightarrow ((a\rightarrow \bigcirc\lnot b) \land \lnot(a \land b)) \text{ U } (\lnot(a \rightarrow \bigcirc \lnot b) \land \lnot(a \land b))\\
+	&\Leftrightarrow ((\lnot a \lor \bigcirc\lnot b) \land \lnot a \lor \lnot b) \text{ U } (\lnot(a \rightarrow \bigcirc \lnot b) \land \lnot(a \land b)) \\
+	&\Leftrightarrow ((\lnot a \lor \bigcirc\lnot b) \land \lnot a \lor \lnot b) \text{ U } (\lnot(\lnot a \lor \bigcirc \lnot b) \land \lnot(a \land b)) \\
+	&\Leftrightarrow ((\lnot a \lor \bigcirc\lnot b) \land \lnot a \lor \lnot b) \text{ U } ( (a \land \bigcirc b) \land \lnot(a \land b)) \\
+	&\Leftrightarrow ((\lnot a \lor \bigcirc\lnot b)\land \lnot a \lor \lnot b) \text{ U } ( (a \land \bigcirc b) \land (\lnot a \lor \lnot b)) \\
+	&\Leftrightarrow ((\lnot a \lor \bigcirc\lnot b)\land \lnot a \lor \lnot b) \text{ U } ( (a \land \bigcirc b) \land (\lnot a \lor \lnot b)) \\
+	&\Leftrightarrow ((\lnot a \lor \bigcirc\lnot b)\land \lnot a \lor \lnot b) \text{ U } ( a \land \bigcirc b \land \lnot b) \\
+	&\Leftrightarrow (\lnot a \lor (\lnot b \land \bigcirc\lnot b)) \text{ U }(a \land \lnot b \land\bigcirc b) \\
+	&\Leftrightarrow \lnot (a \land \lnot(\lnot b \land \bigcirc\lnot b)) \text{ U }(a \land \lnot b \land\bigcirc b) \\
+	\end{align*}
+	
+	\subsection{b}
+	$cl(\varphi') = \{
+	\hspace*{1cm}\underline{a}, \lnot a,\\
+	\hspace*{2.6cm}\underline{b}, \lnot b,\\
+	\hspace*{2.6cm}\underline{\bigcirc b}, \lnot \bigcirc b,\\
+	\hspace*{2.6cm}\underline{\lnot b \land \bigcirc\lnot b}, \lnot (\lnot b \land \bigcirc\lnot b),\\
+	\hspace*{2.6cm}\underline{a \land \lnot (\lnot b \land \bigcirc \lnot b)}, \lnot (a \land \lnot (\lnot b \land \bigcirc \lnot b))\\
+	\hspace*{2.6cm}\underline{a \land \lnot b}, \lnot(a \land \lnot b),\\
+	\hspace*{2.6cm}\underline{\lnot b \land \bigcirc b}, \lnot (\lnot b \land \bigcirc b),\\
+	\hspace*{2.6cm}\underline{a \land \bigcirc b}, \lnot (a \land \bigcirc b),\\
+	\hspace*{2.6cm}\underline{a \land \lnot b \land \bigcirc b}, \lnot(a \land \lnot b \land \bigcirc b),\\
+	\hspace*{2.6cm}\underline{\varphi'}, \lnot\varphi' \}$\\
+	{\footnotesize(Note: $\lnot \bigcirc b \equiv \bigcirc \lnot b$)}\\
+	
+	\begin{tabular}{c|ccccccccccc}
+		& $a$ & $b$ & $\bigcirc b$ & $ \overbrace{\lnot b\land\bigcirc\lnot b}^\eta$ & $a \land \lnot\eta$ & $a \land \lnot b$ & $\lnot b \land \bigcirc b$ & $a \land \bigcirc b$ &  $a\land\lnot b \land\bigcirc b$ & $\varphi'$\\ \hline
+		$B_0$ & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 1\\
+		$B_0'$& 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0\\
+		$B_1$ & 0 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 1\\
+		$B_1'$& 0 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0\\
+		$B_2$ & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1\\
+		$B_2'$& 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+		$B_3$ & 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 1\\ 
+		$B_3'$& 0 & 1 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\ 
+		$B_4$ & 1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 1\\
+		$B_4'$& 1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0\\
+		$B_5$ & 1 & 0 & 1 & 0 & 1 & 1 & 1 & 1 & 1 & 1\\
+		$B_6$ & 1 & 1 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0\\
+		$B_7$ & 1 & 1 & 1 & 0 & 1 & 0 & 0 & 1 & 0 & 0\\
+	\end{tabular}\\
+	{\footnotesize(Note: Every $B_i'$ is the row representing the possibility but not necessity of rule (ii) first item on slide 138)}
+	
+	\subsection{c}
+	We construct the GNBA $\mathcal{G} = (Q,2^{AP}, \delta, Q_0, \mathcal{F})$, where 
+	\begin{itemize}
+		\item $Q = \{B_0,B_0',B_1,B_1',B_2,B_2',B_3, B_3', B_4, B_4', B_5,B_6,B_7\}$
+		\item $Q_0 = \{B_0,B_1,B_2,B_3,B_4,B_5\}$
+		\item $\mathcal{F} = \{\{B_0', B_1', B_2', B_3', B_4', B_5, B_6, B_7\}\}$
+		\item and $\delta$ as follows:	\\
+		%TODO: possible selfloops? B_4 --a--> B_4?
+		
+		\newcommand{\e}{$\emptyset$}
+		\newcommand{\ab}{$\{a,b\}$}
+		\newcommand{\x}{TODO}
+		\begin{figure}[H]
+			\begin{tabular}{c | ccccccccccccc}
+				& $B_0$ & $B_0'$ & $B_1$ & $B_1'$ & $B_2$ & $B_2'$ & $B_3$ & $B_3'$ & $B_4$ & $B_4'$ & $B_5$ & $B_6$ & $B_7$ \\\hline
+				$B_0$  & \e    &        & \e    &        &       &        &       &        & \e    &        & \e    &        & \\
+				$B_0'$ &       & \e     &       & \e     &       &        &       &        &       & \e     &       &        & \\
+				$B_1$  &       &        &       &        & \e    &        & \e    &        &       &        &       &        & \\
+				$B_1'$ &       &        &       &        &       & \e     &       & \e     &       &        &       & \e     & \e\\
+				$B_2$  &$\{b\}$&        &$\{b\}$&        &       &        &       &        &$\{b\}$&        &$\{b\}$&        & \\
+				$B_2'$ &       & $\{b\}$&       & $\{b\}$&       & $\{b\}$&       &        &       & $\{b\}$&       &        & \\
+				$B_3$  &       &        &       &        &$\{b\}$&        &       &        &       &        &       &        & \\
+				$B_3'$ &       &        &       &        &       & $\{b\}$&       &        &       &        &       &        & \\
+				$B_4$  &$\{a\}$&        &$\{a\}$&        &       &        &       &        &       &        &$\{a\}$&        & \\
+				$B_4'$ &       & $\{a\}$&       & $\{a\}$&       &        &       &        &       &        &       &        & \\
+				$B_5$  &       &        &       &        &$\{a\}$&        &$\{a\}$&        &       &        &       &        & \\
+				$B_6'$ &       & \ab    &       & \ab    &       &        &       &        &       & \ab    &       &        & \\
+				$B_7$  &       &        &       &        &       & \ab    &       & \ab    &       &        &       &        & \\
+			\end{tabular}
+		\end{figure}
+	\end{itemize}
+	
+	
+	\section{2}
+	\subsection{a}
+	\begin{align*}
+	\varphi &= \square(a \rightarrow ((\lnot b) \text{ U } (a \land b))) \\
+	\varphi'=\lnot\varphi &= \lnot \big[\square(a \rightarrow ((\lnot b) \text{ U } (a \land b))) \big]\\
+	&\Leftrightarrow \lnot \big[\lnot\lozenge\lnot(a \rightarrow ((\lnot b) \text{ U } (a \land b))) \big]\\
+	&\Leftrightarrow \lozenge\lnot(a \rightarrow ((\lnot b) \text{ U } (a \land b)))\\
+	&\Leftrightarrow true \text{ U }\lnot(a \rightarrow ((\lnot b) \text{ U } (a \land b)))\\
+	&\Leftrightarrow true \text{ U }\lnot(\lnot a \lor ((\lnot b) \text{ U } (a \land b)))\\
+	&\Leftrightarrow true \text{ U }(a \land \lnot((\lnot b) \text{ U } (a \land b)))\\
+	%&\Leftrightarrow true \text{ U }(a \land \lnot((\lnot b) \text{ U } (a \land b)))\\
+	\end{align*}
+	
+	So $closure(\varphi) = \{\underline{true}, \lnot true\\
+	\hspace*{3.1cm}\underline{a}, \lnot a,\\
+	\hspace*{3.1cm}\underline{b}, \lnot b,\\
+	\hspace*{3.1cm}\underline{a \land b}, \lnot (a \land b),\\
+	\hspace*{3.1cm}\underline{(\lnot b) \text{ U } (a\land b)}, \lnot ((\lnot b) \text{ U } (a\land b)),\\
+	\hspace*{3.1cm}\underline{\varphi'}, \lnot \varphi'
+	\}$
+	\subsection{b}
+	% da quasi immer true gilt ist, ist solange a^eta nicht gilt für phi' beides möglich
+	\begin{tabular}{c|ccccccc}
+		& $true$ & $a$ & $b$ & $a \land b$ & $\overbrace{(\lnot b) \text{ U } (a \land b)}^\eta$ & $a\land \eta$ & $\varphi'$\\ \hline
+		$B_0$ & 1 & 0 & 0 & 0 & 1 & 0 & 1\\
+		$B_0'$ & 1 & 0 & 0 & 0 & 1 & 0 & 0\\
+		$B_0''$ & 1 & 0 & 0 & 0 & 0 & 0 & 0\\
+		$B_0'''$ & 1 & 0 & 0 & 0 & 0 & 0 & 1\\
+		$B_1$ & 1 & 0 & 1 & 0 & 0 & 0 & 1\\
+		$B_1'$ & 1 & 0 & 1 & 0 & 0 & 0 & 0\\
+		$B_2$ & 1 & 1 & 0 & 0 & 1 & 0 & 1\\
+		$B_2'$ & 1 & 1 & 0 & 0 & 1 & 0 & 0\\
+		$B_2''$ & 1 & 1 & 0 & 0 & 0 & 0 & 0\\
+		$B_2'''$ & 1 & 1 & 0 & 0 & 0 & 0 & 1\\
+		$B_3$ & 1 & 1 & 1 & 1 & 1 & 1 & 1\\
+	\end{tabular}\\
+	
+	\section{3}
+	\begin{align*}
+	\lnot\bigcirc\psi \in B &\Leftrightarrow \bigcirc\psi \notin B \\
+	&\stackrel{*}{\Leftrightarrow} \psi \notin B'	
+	\end{align*}
+	where $*$ holds, because of $B'\in \delta(B,B\cap AP)$
+	
+	
+	
+	
+	
+\end{document}
+
+

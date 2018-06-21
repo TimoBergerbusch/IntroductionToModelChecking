@@ -1,0 +1,184 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath} % Math
+\usepackage{amssymb} % Math symbols
+\usepackage[english]{babel} % Language
+\usepackage{fancyhdr} % Header
+\usepackage[a4paper, total={15cm, 20cm}]{geometry} % Dimensions of the paper and the text area
+\usepackage[utf8]{inputenc} % encoding in UTF, needed for umlauts if German
+\usepackage{mathtools} % Text above arrows
+\usepackage{msc} % Drawing MSCs
+\usepackage{multicol} % Multiple columns
+\usepackage[explicit]{titlesec} % Automatic section titles
+\usepackage{tikz} % Diagrams
+\usetikzlibrary{arrows.meta, automata, shapes, matrix,positioning}
+\usepackage{enumitem}   % Enumeration item
+\usepackage{float}
+\usepackage{verbatim}
+\usepackage{subcaption} 
+
+
+% Other packages that might be useful in the future
+%\usepackage{lingmacros}
+%\usepackage{tree-dvips}
+%\usepackage{ulem}
+%\usepackage{amsthm}
+%\usepackage{amsbsy}
+%\usepackage{textcomp,gensymb}
+%\usepackage{graphicx}
+%\usepackage{mathtools}
+
+% Custom variant of msc environment:
+% - No "msc" keyword, longer partial messages
+% - Increased vertical distance between messages
+% - Less distance to the frame left and right
+% - Less distance between header and processes
+% - Less distance between footer and frame
+% - Passing all given options down to the msc environment
+\newenvironment{cmsc}[1][]{\msc[msc keyword={}, self message width=1.1cm, level height=0.6cm, environment distance=1.2cm, head top distance=0.75cm, foot distance=0.5cm, #1]}{\endmsc}
+
+% No indentation at new paragraphs
+\setlength{\parindent}{0pt}
+
+% Distance between columns
+\setlength{\columnsep}{1cm}
+% Vertical line between columns
+\setlength{\columnseprule}{0.5pt}
+\def\columnseprulecolor{\color{gray}}
+
+% Settings
+\newcommand{\sheetNr}{6}
+
+%% Header
+\fancyhf{}
+\pagestyle{fancy}
+\lhead{Model Checking Exercise Sheet \sheetNr}
+\rhead{Aaron Grabowy: 345766\\ Timo Bergerbusch: 344408\\ Felix Linhart: 318801}
+\setlength{\headheight}{40pt}
+
+%% Automatic section titles
+\titleformat{\section}{\normalfont\Large\bfseries}{}{0em}{Exercise #1}
+\titleformat{\subsection}{\normalfont\large\bfseries}{}{0em}{#1)}
+
+\begin{document}
+	
+\section{1}
+\subsection{a}
+\begin{itemize}
+\item ``At next'':\\
+\begin{tabular}{lcl}
+	$\sigma \models \varphi \text{ AX } \psi$ & iff & there exists a $i \ge 0$ s.t.\\
+	& & $A_iA_{i+1}A_{i+2} \dots \models \psi$  and \\
+	& & $A_iA_{i+1}A_{i+2} \dots \models \varphi$\\
+\end{tabular}	 
+\item ``While'':\\
+\begin{tabular}{lcl}
+	$\sigma \models \varphi \text{ WH } \psi$ & iff & there exists $k,n$, s.t. for every $k \le i \le n$ \\
+	& & $A_kA_{k+1}A_{k+2} \dots A_{n} \models \psi$ $\rightarrow$ $A_kA_{k+1}A_{k+2} \dots A_{n-1} \models \varphi$ and \\
+	& & $A_n \not\models \psi$
+\end{tabular}	 
+
+\item ``Before'':\\
+\begin{tabular}{lcl}
+	$\sigma \models \varphi \text{ B } \psi$ & iff & for every $i > 0$ \\
+	& & $A_i \models \psi \rightarrow A_{i-1} \models \varphi$
+\end{tabular}
+
+\end{itemize}
+\subsection{b}
+
+\begin{itemize}
+\item $\varphi \text{ AX }\psi \stackrel{def.}{=} true\text{ U } (\psi \rightarrow \varphi)$
+\item $\varphi \text{ WH }\psi \stackrel{def.}{=} (\psi \land \varphi) \text{ U } (\lnot\psi)$
+\item $\varphi \text{ B }\psi \stackrel{def.}{=} \square(\bigcirc \psi \rightarrow \varphi)$
+\end{itemize}	
+
+\section{2}
+\subsection{a}
+
+\begin{align*}
+\varphi &= (a \rightarrow \bigcirc \lnot b) \text{ W } (a \land b) \\
+\lnot\varphi &= \lnot \big[(a \rightarrow \bigcirc \lnot b) \text{ W } (a \land b) \big]\\
+&\Leftrightarrow (\lnot(a \land b)) \text{ U } (\lnot(a \rightarrow \bigcirc \lnot b) \land \lnot(a \land b))\\
+&\Leftrightarrow (\lnot a \lor \lnot b) \text{ U } (\lnot(a \rightarrow \bigcirc \lnot b) \land \lnot(a \land b)) \\
+&\Leftrightarrow (\lnot a \lor \lnot b) \text{ U } (\lnot(\lnot a \lor \bigcirc \lnot b) \land \lnot(a \land b)) \\
+&\Leftrightarrow (\lnot a \lor \lnot b) \text{ U } ( (a \land \bigcirc b) \land \lnot(a \land b)) \\
+&\Leftrightarrow (\lnot a \lor \lnot b) \text{ U } ( (a \land \bigcirc b) \land (\lnot a \lor \lnot b)) \\
+&\Leftrightarrow (\lnot a \lor \lnot b) \text{ U } ( (a \land \bigcirc b) \land (\lnot a \lor \lnot b)) \\
+&\Leftrightarrow (\lnot a \lor \lnot b) \text{ U } ( a \land \bigcirc b \land \lnot b) \\
+%&\Leftrightarrow
+\end{align*}
+
+\subsection{b}
+\subsubsection*{$P = Words(\varphi)$:}
+Is a safety property.\\
+Every trace $\sigma$, with $\sigma \not\models \varphi$ has the prefix $\{a\}^*\{b\}$. For that we can not find any addition, s.t. $\varphi$ is again fulfilled.
+
+\subsubsection*{$P' = Words(\lnot\varphi)$:}
+Is not a safety property.\\
+In order to be a safety property there has to exists a finite $BadPrefix$ for every word, which is not in the language. Considering the word $\sigma = (\emptyset \lor \{a\} \lor \{b\})^\omega$, which is obviously not in $Words(\lnot\varphi)$ we can not find a finite $BadPrefix$ to rule it out. So it can not be a safety property.
+
+\section{3}
+\subsection{a}
+%$\lozenge\square\varphi \equiv$\\
+%$\square\lozenge\varphi \equiv$ infinitely many often $\varphi$. \\
+For every $\sigma$, with $\sigma \models \lozenge\square\varphi$, also $\sigma \models \square\lozenge\varphi$ holds, since having from some point on consecutively $\varphi$ fulfilled also means to encounter infinitely many.\\
+But the other way around does not hold, since having $\sigma = A_0A_1\dots$, s.t. $A_i \models \varphi$ if $i \mod 2 = 0$ and $A_i \not\models \varphi$ if $i \mod 2 = 1$ (alternating fulfilling $\varphi$), then $\sigma \not \models \lozenge\square\varphi$.\\
+Therefore $\lozenge\square\varphi \quad \subset \quad \square\lozenge\varphi $
+
+\subsection{b}
+$\lozenge\square\varphi \land \lozenge\square \psi \quad \equiv \quad \lozenge(\square\varphi \land \square\psi)$, since if for some point $i \ge0 $ it holds that $\square\varphi$ and for some point $j \ge 0, j > i$ it holds that $\square \psi$, then from $J$ on both $\varphi$ and $\psi$ both hold continuously. So there ex. a point ($j$) from where $\square\varphi \land \square\psi$ holds.\\
+Analogously if $j <i$.\\
+If $i=j$ obviously also the first formula holds.
+
+\subsection{c}
+$\varphi \land \square(\varphi \rightarrow \bigcirc\lozenge\varphi) \quad \subset \quad \square\lozenge\varphi$
+\begin{itemize}
+\item[$\subset$:] Let $\sigma \models \varphi \land \square(\varphi \rightarrow \bigcirc\lozenge\varphi)$. Then $\varphi$ holds at the very first element of $\sigma$. Also this element fulfills the premise of the implication. So there is an other $\varphi$ in $\sigma$, since $\sigma \models \varphi \land \square(\varphi \rightarrow \bigcirc\lozenge\varphi)$. This new $\varphi$ again fulfills the premise demand and so on. Therefore we will encounter infinitely many $\varphi$'s.
+\item[$\not\supset$:] Let $\sigma = A_0A_1\dots \models \square\lozenge\varphi$, but the very first element $A_0 \not\models\varphi$. Then $\sigma\not\models \varphi \land \square(\varphi \rightarrow \bigcirc\lozenge\varphi)$, since $A_0 \models\varphi$ would have to hold.
+\end{itemize}
+
+\subsection{d}
+\begin{itemize}
+	\item[$\not\subset$:] Let $\sigma = A_0A_1\dots$, with
+	\begin{itemize}
+		\item $A_i \models \varphi$ for $i\in\{1,2,3,5,6,7\}$
+		\item $A_i \models \psi$ for $i \in \{4,8\}$
+		\item $A_9 \models \pi$		
+	\end{itemize}
+	Then $\sigma \models (\varphi \text{ U } \psi) \text{ U } \pi$, but $\sigma \not\models \varphi \text{ U } ( \psi \text{ U } \pi)$
+	\item [$\not\subset$:] Let $\sigma = A_0A_1\dots$, with
+	\begin{itemize}
+		\item $A_i \models \varphi$ for $i\in\{1,2,3,4\}$
+		\item $A_i \models \psi$ for $i \in \{5,6,7,8\}$
+		\item $A_9 \models \pi$		
+	\end{itemize}
+	Then $\sigma \not\models (\varphi \text{ U } \psi) \text{ U } \pi$, but $\sigma \models \varphi \text{ U } ( \psi \text{ U } \pi)$
+\end{itemize}
+	So $(\varphi \text{ U } \psi) \text{ U } \pi \quad \neq \quad  \varphi \text{ U } (\psi \text{ U } \pi)$
+
+\section{4}
+\subsection{a}
+\begin{align*}
+\varphi \text{ R } \psi &= \lnot(\lnot\varphi \text{ U } \lnot\psi)\\
+		&= \lnot(\varphi' \text{ U } \psi')\text{, where } \varphi' = \lnot\varphi \text{ and } \psi' = \lnot\psi \\
+		&\stackrel{\text{exp. law of U}}{=} \lnot\big( \psi' \lor (\varphi' \land \bigcirc (\varphi' \text{ U } \psi')) \big) \\
+		&= \lnot\psi' \land \lnot (\varphi' \land \bigcirc (\varphi' \text{ U } \psi')) \\
+		&= \lnot\psi' \land  (\lnot\varphi' \lor \lnot\bigcirc (\varphi' \text{ U } \psi')) \\
+		&= \lnot\psi' \land  (\lnot\varphi' \lor \bigcirc \lnot(\varphi' \text{ U } \psi')) \\
+		&\stackrel{\text{def of }\varphi', \psi'}{=} \lnot\lnot\psi \land ( \lnot\lnot\varphi \lor \bigcirc \lnot(\lnot\varphi \text{ U }\lnot\psi))\\
+		&= \psi \land ( \varphi \lor \bigcirc \lnot(\lnot\varphi \text{ U }\lnot\psi))\\
+		&\stackrel{\text{def. of R}}{=} \psi \land ( \varphi \lor \bigcirc (\varphi \text{ R }\psi ))\\
+\end{align*}
+
+\subsection{b}
+\begin{align*}
+	\varphi \text{ R } \psi &= \lnot(\lnot\varphi \text{ U } \lnot\psi)\\
+		&= \lnot(\varphi' \text{ U } \psi')\text{, where } \varphi' = \lnot\varphi \text{ and } \psi' = \lnot\psi \\
+		&\stackrel{\text{book page 271}}{=} (\varphi' \land \lnot\psi')\text{ W } (\lnot\varphi' \land \lnot\psi') \\
+		&\stackrel{\text{def of }\varphi', \psi'}{=} (\lnot\varphi \land \lnot\lnot\psi)\text{ W } (\lnot\lnot\varphi \land \lnot\lnot\psi)\\
+		&= (\lnot\varphi \land \psi)\text{ W } (\varphi \land \psi)
+\end{align*}
+
+\end{document}
+
+

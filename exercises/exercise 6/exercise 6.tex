@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath} % Math
+\usepackage{amssymb} % Math symbols
+\usepackage[english]{babel} % Language
+\usepackage{fancyhdr} % Header
+\usepackage[a4paper, total={15cm, 20cm}]{geometry} % Dimensions of the paper and the text area
+\usepackage[utf8]{inputenc} % encoding in UTF, needed for umlauts if German
+\usepackage{mathtools} % Text above arrows
+\usepackage{msc} % Drawing MSCs
+\usepackage{multicol} % Multiple columns
+\usepackage[explicit]{titlesec} % Automatic section titles
+\usepackage{tikz} % Diagrams
+\usetikzlibrary{arrows.meta, automata, shapes, matrix,positioning}
+\usepackage{enumitem}   % Enumeration item
+\usepackage{float}
+\usepackage{verbatim}
+\usepackage{subcaption} 
+
+
+% Other packages that might be useful in the future
+%\usepackage{lingmacros}
+%\usepackage{tree-dvips}
+%\usepackage{ulem}
+%\usepackage{amsthm}
+%\usepackage{amsbsy}
+%\usepackage{textcomp,gensymb}
+%\usepackage{graphicx}
+%\usepackage{mathtools}
+
+% Custom variant of msc environment:
+% - No "msc" keyword, longer partial messages
+% - Increased vertical distance between messages
+% - Less distance to the frame left and right
+% - Less distance between header and processes
+% - Less distance between footer and frame
+% - Passing all given options down to the msc environment
+\newenvironment{cmsc}[1][]{\msc[msc keyword={}, self message width=1.1cm, level height=0.6cm, environment distance=1.2cm, head top distance=0.75cm, foot distance=0.5cm, #1]}{\endmsc}
+
+% No indentation at new paragraphs
+\setlength{\parindent}{0pt}
+
+% Distance between columns
+\setlength{\columnsep}{1cm}
+% Vertical line between columns
+\setlength{\columnseprule}{0.5pt}
+\def\columnseprulecolor{\color{gray}}
+
+% Settings
+\newcommand{\sheetNr}{6}
+
+%% Header
+\fancyhf{}
+\pagestyle{fancy}
+\lhead{Model Checking Exercise Sheet \sheetNr}
+\rhead{Aaron Grabowy: 345766\\ Timo Bergerbusch: 344408\\ Felix Linhart: 318801}
+\setlength{\headheight}{40pt}
+
+%% Automatic section titles
+\titleformat{\section}{\normalfont\Large\bfseries}{}{0em}{Exercise #1}
+\titleformat{\subsection}{\normalfont\large\bfseries}{}{0em}{#1)}
+
+\begin{document}
+	
+	\section{1}
+	\subsection{a}
+	
+	\section{2}
+	\subsection{i}
+	$\Diamond winter$ \underline{oder} $\emptyset \bigcup winter$
+	\subsection{ii}
+	$\square awesome $
+	\subsection{iii} % unsicher
+	$(here \bigcup \emptyset) \bigcup here$
+	\subsection{iv}
+	$((live\land hero) \bigcup hero) \lor((live \land hero) \bigcup live) $
+	\subsection{v}
+	% $\underbrace{(form_1 \rightarrow \bigcirc (day \land form_2) \land \{day, form_2\}\rightarrow \bigcirc\{form_1\}}_{\text{alterating } form_1 \text{ and } form_2,day} $\\ \\$ \bigcup \underbrace{\{kiss,true\_form\}}_{kiss}  \underbrace{\square ({true\_form} \rightarrow \bigcirc \{true\_form,day\} \land \{true\_form,day\} \rightarrow \{true\_form\})}_{true\_form\text{ and alternating }day }$\\
+	$form_1 \bigcirc (day \land form_2 \lor kiss \land true\_form) \bigcup (kiss \land true\_form \bigcirc \square (true\_form \bigcirc (true\_form \land day))$
+	\subsection{vi}
+	$ \square(in\_debt \rightarrow \Diamond \emptyset)$
+	\subsection{vii}
+	$ true $
+	\subsection{viii}
+	$ legen\bigcirc (wait\_for\_it \bigcup dairy) $% \land \Diamond \square wait\_for\_it\bigcup dairy$
+	
+	
+	\section{3}
+	\subsection{$\varphi_1$}
+	$TS \not\models \varphi_1$, because of $\pi_1 = s_2s_4s_2s_4\dots$ with $trace(\pi_1)=(\{c\}\{b\})^\omega$ is a counterexample.
+	\subsection{$\varphi_2$}
+	$TS \models \varphi_2$, because of there exists no loop in $TS$ only visiting $s_1$ and $s_4$, which are the only states not having a $c$ in their label.
+	\subsection{$\varphi_3$}
+	$TS \models \varphi_3$, because in order to find a counterexample we have to fulfill the premise so from either $s_1$ or $s_2$ we have to move to $s_4$ and from there we cannot find a neighbor not containing a $c$ in their label.
+	\subsection{$\varphi_4$}
+	$TS \not\models \varphi_4$, because for $\pi_4 = s_1s_4s_2s_4s_2\dots$ with $trace(\pi_4)= \{a\}(\{b\}\{c\})^\omega$ is a counterexample.
+	\subsection{$\varphi_5$}
+	$TS \models \varphi_5$, because if we start with $s_1$ this is obviously fulfilled. However if we start with $s_2$ it is also fulfilled, since $\bigcup$ is defined (slide 35), such that $j \ge 0$. So we can also directly start in the $\square(b\lor c)$ phase. Since we don't have to a loop towards $s_1$, which is the only state not fulfilling $b \lor c$, the statement holds.
+	\subsection{$\varphi_6$}
+	$TS \not\models \varphi_6$, because of $\pi_6 = s_1 s_4 s_2 s_4 s_2\dots$ with $trace(\pi_6)= \{a\}(\{b\}\{c\})^\omega$ is a counterexample
+	\subsection{$\varphi_7$}
+	$TS \not\models \varphi_7$, because of $\pi_7 = s_2s_4s_2s_4\dots$ with $trace(\pi_7)= (\{c\}\{b\})^\omega$ is a counterexample.
+\end{document}
+
+
