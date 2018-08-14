@@ -1,0 +1,238 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath} % Math
+\usepackage{amssymb} % Math symbols
+\usepackage[english]{babel} % Language
+\usepackage{centernot} % \centernot
+\usepackage{fancyhdr} % Header
+\usepackage[a4paper, total={15cm, 20cm}]{geometry} % Dimensions of the paper and the text area
+\usepackage[utf8]{inputenc} % encoding in UTF, needed for umlauts if German
+\usepackage{mathtools} % Text above arrows
+\usepackage{msc} % Drawing MSCs
+\usepackage{multicol} % Multiple columns
+\usepackage[explicit]{titlesec} % Automatic section titles
+\usepackage{tikz} % Diagrams
+\usetikzlibrary{arrows.meta, automata, positioning, shapes, matrix}
+
+
+% Other packages that might be useful in the future
+%\usepackage{lingmacros}
+%\usepackage{tree-dvips}
+%\usepackage{ulem}
+%\usepackage{amsthm}
+%\usepackage{amsbsy}
+%\usepackage{textcomp,gensymb}
+%\usepackage{graphicx}
+%\usepackage{mathtools}
+
+% Custom variant of msc environment:
+% - No "msc" keyword, longer partial messages
+% - Increased vertical distance between messages
+% - Less distance to the frame left and right
+% - Less distance between header and processes
+% - Less distance between footer and frame
+% - Passing all given options down to the msc environment
+\newenvironment{cmsc}[1][]{\msc[msc keyword={}, self message width=1.1cm, level height=0.6cm, environment distance=1.2cm, head top distance=0.75cm, foot distance=0.5cm, #1]}{\endmsc}
+
+% No indentation at new paragraphs
+\setlength{\parindent}{0pt}
+
+% Distance between columns
+\setlength{\columnsep}{1cm}
+% Vertical line between columns
+\setlength{\columnseprule}{0.5pt}
+\def\columnseprulecolor{\color{gray}}
+
+% Settings
+\newcommand{\sheetNr}{10}
+
+%% Header
+\fancyhf{}
+\pagestyle{fancy}
+\lhead{Model Checking Exercise Sheet \sheetNr}
+\rhead{Aaron Grabowy: 345766\\ Timo Bergerbusch: 344408\\ Felix Linhart: 318801}
+\setlength{\headheight}{40pt}
+
+%% Automatic section titles
+\titleformat{\section}{\normalfont\Large\bfseries}{}{0em}{Exercise #1}
+\titleformat{\subsection}{\normalfont\large\bfseries}{}{0em}{#1)}
+
+\begin{document}
+
+\section{1}
+
+$\mathbf{\Phi_1:}$
+
+ENF: $\exists \lozenge \forall \square c
+\equiv \exists \lozenge \lnot \exists \lozenge \lnot c$
+\begin{align*}
+    Sat(\exists \lozenge \lnot c) &= \{s_0, s_1\}\\
+    Sat(\lnot \exists \lozenge \lnot c) &= \{s_2, s_3, s_4\}\\
+    Sat(\exists \lozenge \lnot \exists \lozenge \lnot c) &= S
+\end{align*}
+Since $S_0 \subseteq Sat(\Phi_1)$, it holds $TS \models \Phi_1$.
+
+$\mathbf{\Phi_2:}$
+
+ENF: $\forall (a \text{ U } \forall \lozenge c)
+\equiv \forall (a \text{ U } \lnot \exists \square \lnot c)
+\equiv \lnot \exists (\exists \square \lnot c \text{ U } (\exists \square \lnot c \land \lnot a)) \land \lnot \exists \square \exists \square \lnot c$\\
+$\equiv \lnot \exists (\exists \square \lnot c \text{ U } (\exists \square \lnot c \land \lnot a)) \land \lnot \exists \square \lnot c$
+
+From $Sat(\exists \square \lnot c) = \emptyset$, it follows $Sat(\Phi_2) = Sat(\lnot \exists (false \text{ U } (false \land \lnot a)) \land \lnot false)
+= Sat(\lnot \exists (false \text{ U } false) \land true)
+= Sat(\lnot false \land true) = S$
+
+Since $S_0 \subseteq Sat(\Phi_2)$, it holds $TS \models \Phi_2$.
+
+\section{2}
+
+\subsection{a}
+
+\begin{alignat*}{3}
+    Sat(b) & &&= \{s_0, s_2, s_3\}\\
+    Sat(a) & &&= \{s_0, s_5\}\\
+    Sat(\lnot a) &= S \setminus Sat(a) &&= \{s_1, s_2, s_3, s_4\}\\
+    Sat(\Phi_1) &= Sat(b) \cap Sat(\lnot a) &&= \{s_2, s_3\}\\
+    \\
+    Sat(\lnot b) &= S \setminus Sat(b) &&= \{s_1, s_4, s_5\}\\
+    Sat(a \land \lnot b) &= Sat(a) \cap Sat(\lnot b) &&= \{s_5\}\\
+    Sat(\Psi_1) &= T_2 &&= \{s_0, s_2, s_5\}
+\end{alignat*}
+\begin{align*}
+    T_0 &= \{s_5\}\\
+    T_1 &= \{s_2, s_5\}\\
+    T_2 &= \{s_0, s_2, s_5\}
+\end{align*}
+
+The satisfactions sets are computed recursively according to lec19, P. 28 and P. 63.
+
+\subsection{b}
+
+$Sat_{sfair}(\exists \square true)$ is the set of states that have at least one strong fair path, i.e. if infinitely often $s_2$ or $s_3$ is visited, then $s_0, s_2$, or $s_5$ have to be visited infinitely often as well.
+
+The only way to not visit $Sat(\Psi_1)$ infinitely often is to take the cycle of $s_3$ and $s_4$.
+Since $s_3 \in Sat(\Phi_1)$ and there is no other way to continue once $s_3$ or $s_4$ have been reached, $Sat_{sfair}(\exists \square true) = S \setminus \{s_3, s_4\} = \{s_0, s_1, s_2, s_5\}$.
+
+These states are labelled with $a_{sfair}$ for c).
+
+\subsection{c}
+
+We first transform $\Phi$ into an equivalent CTL formula $\Phi'$ in ENF.\\
+$\forall \square \forall \lozenge a
+\equiv \lnot \exists \lozenge \lnot \forall \lozenge a
+\equiv \lnot \exists \lozenge \exists \square \lnot a$
+
+Then we examine the subformula $\exists \square \lnot a$.
+The states $s_1, s_2, s_3$, and $s_4$, which satisfy $\lnot a$, are labelled with a new atomic proposition $c$, so that we have the formula $\exists \square c$.
+
+The incuded digraph $G_c$ has only one non-trivial cycle, which is composed of $s_3$ and $s_4$, but they are not $sfair$.
+Thus $Sat_{sfair}(\exists \square c) = \emptyset$ and no state is labeled with the new atomic proposition $d$.
+
+Now $Sat_{sfair}(\exists \lozenge d) = Sat(\exists \lozenge (d \land a_{sfair})) = Sat(\exists \lozenge false) = \emptyset$.
+
+And thus $Sat_{sfair}(\Phi) = S \setminus \emptyset = S$.
+
+
+\section{3}
+
+$Sat(\forall \bigcirc (a \land \lnot b)) = \{s_0, s_4\}$\\
+$Sat(\forall \bigcirc (b \land \lnot a)) = \{s_1\}$\\
+$\Rightarrow$ In $fair$: infinitely often $\{s_0, s_4\}$ implies infinitely often $s_1$.\\
+
+$Sat(\exists \lozenge b) = S$, so it always has to hold infinitely often $b$, i.e. $\{s_2, s_4\}$ has to occur infinitely many times.
+Since the only transition from $s_2$ goes to $s_4$, this is equivalent to infinitely often $s_4$.
+
+A path is fair iff both conditions are fulfilled.
+Since $s_4$ has to occur infinitely many times due to the second condition, the premise of the first condition is fulfilled.
+The conclusion of the first condition requires $s_1$ to occur infinitely many times.
+
+Since the only transition from $s_1$ goes to $s_2$, a path is fair iff the state sequence $s_1 s_2 s_4$ occurs infinitely many times, which is equivalent to infinitely often $s_2$.
+
+Since $s_2$ is reachable from every state, $Sat_{fair}(\exists \square true) = S$.
+
+ENF:\begin{align*}
+    \Phi &= \forall \square(a \rightarrow \forall \lozenge (b \land \lnot a))\\
+         &\equiv \lnot \exists \lozenge (a \land \lnot \forall \lozenge (b \land \lnot a))\\
+         &\equiv \lnot \exists \lozenge (a \land \exists \square \lnot (b \land \lnot a))
+\end{align*} 
+
+$Sat(\lnot (b \land \lnot a)) = S \setminus \{s_2\} = \{s_0, s_1, s_3, s_4\}$. These states are labelled with $c$.
+Since $s_2$ is not included in the induced digraph $G_c$ and infinitely often $s_2$ is required for fairness, $Sat_{fair}(\exists \square c) = Sat_{fair}(\exists \square \lnot (b \land \lnot a)) = \emptyset$.
+
+Therefore $Sat_{fair}(\Phi) = Sat_{fair}(\lnot \exists \lozenge (a \land false))
+= Sat_{fair}(\lnot \exists \lozenge false)
+= Sat_{fair}(\lnot false)
+= Sat_{fair}(true)
+= S$.
+
+Since $S_0 \subseteq Sat_{fair}(\Phi)$, it holds $TS \models_{fair} \Phi$.
+
+Intuitively: Due to the fairness assumption the right side of the implication in $\Phi$ is always fulfilled, which leads to $\forall \square true$, which holds for every state.
+
+\section{4}
+
+\subsection{a}
+
+Let $TS_1 \models \Phi$.
+
+If $\Phi$ is of the form $a$ [or $\lnot a$]:\\
+$\implies a \in [\notin] L_1(s)$ for all $s \in I_1$. Since $I_2 = I_1$ and $L_2(s) = L_1(s)$ it also holds $a \in [\notin] L_2(s)$ for all $s \in I_2$.\\
+$\implies TS_2 \models \Phi$.\\
+
+If $\Phi$ is of the form $\Phi' \land \Phi''$:\\
+$\implies TS_1 \models \Phi'$ and $TS_1 \models \Phi''$.\\
+$\implies TS_2 \models \Phi'$ and $TS_2 \models \Phi''$.\\
+$\implies TS_2 \models \Phi$.\\
+
+If $\Phi$ is of the form $\exists \varphi$:\\
+$\implies \exists \pi = s_0 s_1 s_2 \ldots \in Paths(TS_1) . \pi \models_{TS_1} \varphi$.\\
+Since $I_1 = I_2$ it holds $s_0 \in I_2$. Since $S_1 \subseteq S_2$ and $\rightarrow_1 \subseteq \rightarrow_2$, there is a transition from $s_i$ to $s_{i+1}$ in $\rightarrow_2$, for all $i \ge 0$.\\
+$\implies \pi \in Paths(TS_2)$ and $\pi \stackrel{*}{\models}_{TS_2} \varphi$.\\
+$\implies TS_2 \models \Phi$.\\
+
+Where * is proven in the following:\\
+Let $\pi = s_0 s_1 \ldots \models_{TS_1} \varphi$.
+
+If $\varphi$ is of the form $\bigcirc \Phi$:\\
+$\implies s_1 \models_{TS_1} \Phi$.\\
+$\implies s_1 \models_{TS_2} \Phi$.\\
+$\implies s_0 s_1 \ldots \models_{TS_2} \bigcirc \Phi$.\\
+$\implies \pi \models_{TS_2} \varphi$.\\
+
+If $\varphi$ is of the form $\square \Phi$:\\
+$\implies s_i \models_{TS_1} \Phi \ \forall i \ge 0$.\\
+$\implies s_i \models_{TS_2} \Phi \ \forall i \ge 0$.\\
+$\implies \pi \models_{TS_2} \varphi$.\\
+
+If $\varphi$ is of the form $\Phi \text{ U } \Phi'$:\\
+$\implies \exists i \ge 0 . s_i \models_{TS_1} \Phi' \land s_j \models_{TS_1} \Phi \forall j \in [0,i]$.\\
+$\implies \exists i \ge 0 . s_i \models_{TS_2} \Phi' \land s_j \models_{TS_2} \Phi \forall j \in [0,i]$.\\
+$\implies \pi \models_{TS_2} \varphi$.\\
+
+By structural induction, it follows $TS_2 \models \Phi$.\\
+
+Counter example in the case of $I_1 \subsetneq I_2$:\\
+
+Let $TS_1 = (\{s_0\}, \{\sigma\}, \{(s_0, \sigma, s_0)\}, \{s_0\}, \{a, b\}, L_1)$ with $L_1(s_0) = a$ and\\
+$TS_2 = (\{s_0, s_1\}, \{\sigma\}, \{(s_0, \sigma, s_0), (s_1, \sigma, s_1)\}, \{s_0, s_1\}, \{a, b\}, L_2)$ with $L_2(s_0) = a$ and\\
+$L_2(s_1) = b$.
+
+Then $TS_1 \models a$ but $TS_2 \not\models a$, since the initial state $s_1$ of $TS_2$ is not labeled with $a$.
+
+\subsection{b}
+
+Let $TS_1 = (\{s_0, s_1\}, \{\sigma\}, \{(s_0, \sigma, s_1), (s_1, \sigma, s_1)\}, \{s_0\}, \{a, b\}, L_1)$ with $L_1(s_0) = L_1(s_1) = a$
+and $TS_2 = (\{s_0, s_1, s_2\}, \{\sigma\}, \{(s_0, \sigma, s_1), (s_1, \sigma, s_1), (s_0, \sigma, s_2), (s_2, \sigma, s_2)\}, \{s_0\}, \{a, b\}, L_2)$ with $L_2(s_0) = L_2(s_1) = a$ and $L_2(s_2) = b$.
+
+Since all components of $TS_1$ are subsets of or equal to the components of $TS_2$, it holds $TS_1 \subseteq TS_2$.
+
+Assuming there exists a ECTL formula $\Phi_2$ equivalent to the CTL formula $\Phi_1 = \lnot \exists \bigcirc b$.
+
+It holds $TS_1 \models \Phi_1$ and $TS_2 \not\models \Phi_1$.
+Due to the equivalence, it holds $TS_1 \models \Phi_2$ and $TS_2 \not\models \Phi_2$ and thus $TS_1 \models \Phi_2 \centernot\implies TS_2 \models \Phi_2$.
+
+However, this is a contradiction to $TS_1 \subseteq TS_2$.
+
+Thus the assumption was false and there is no such ECTL formula $\Phi_2$.
+
+\end{document}
